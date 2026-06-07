@@ -30,10 +30,6 @@ const setChannel = (tvScreen: HTMLElement, channel: Channel) => {
 	tvScreen.dataset.channel = channel
 }
 
-const markInteractionStarted = () => {
-	root.classList.add('is-playing')
-}
-
 window.addEventListener('load', () => {
 	root.classList.add('is-ready')
 })
@@ -82,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	})
 
 	draggableHead.on('pointerDown', () => {
-		markInteractionStarted()
 		setFace(artHead, 'ahh')
 		setChannel(tvScreen, 'maybe')
 	})
@@ -93,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	})
 
 	draggableHead.on('dragStart', () => {
-		markInteractionStarted()
 		document.removeEventListener('mousemove', headChange)
 		setFace(artHead, 'ahh')
 	})
