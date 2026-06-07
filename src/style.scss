@@ -12,6 +12,20 @@
 	src: url('fonts/entypo.woff') format('woff');
 }
 
+@font-face {
+	font-weight: 400;
+	font-style: normal;
+	font-family: Lato;
+	src: url('fonts/lato-400.woff') format('woff');
+}
+
+@font-face {
+	font-weight: 800;
+	font-style: normal;
+	font-family: Lato;
+	src: url('fonts/lato-800.woff') format('woff');
+}
+
 /* Mixins */
 @mixin media-sm {
 
@@ -60,30 +74,85 @@ html.is-ready body {
 	visibility: visible;
 }
 
-/* Content */
-.content {
+/* Landing */
+.site-intro {
 	z-index: 5;
-	color: white;
 	position: absolute;
-	top: 10%;
-	left: 19vw;
-	line-height: 1.5;
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-weight: 300;
-	font-size: 15px;
+	top: 24px;
+	left: 24px;
+	width: min(360px, calc(100vw - 48px));
+	color: #fff;
+	font-family: Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+	pointer-events: none;
+	transition:
+		opacity 450ms ease,
+		transform 450ms ease;
 
 	@include media-md {
-		font-size: 20px;
+		top: 9vh;
+		left: 11vw;
+		width: 400px;
+	}
+
+	&__kicker {
+		margin-bottom: 8px;
+		font-size: 14px;
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0;
 	}
 
 	&__title {
-		font-size: 2em;
-		font-weight: 500;
+		margin: 0;
+		font-size: 44px;
+		font-weight: 800;
+		line-height: 1;
+
+		@include media-md {
+			font-size: 64px;
+		}
 	}
+}
+
+.site-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 18px;
+	pointer-events: auto;
 
 	&__link {
-		color: white;
+		display: inline-flex;
+		align-items: center;
+		min-height: 38px;
+		padding: 0 14px;
+		border: 2px solid rgba(255, 255, 255, 0.8);
+		color: #fff;
+		background-color: rgba(30, 43, 38, 0.34);
+		font-size: 15px;
+		font-weight: 800;
+		line-height: 1;
 		text-decoration: none;
+		text-shadow: none;
+		transition:
+			background-color 180ms ease,
+			border-color 180ms ease;
+
+		&:hover,
+		&:focus-visible {
+			border-color: #fff;
+			background-color: rgba(30, 43, 38, 0.56);
+		}
+	}
+}
+
+.is-playing {
+
+	.site-intro {
+		opacity: 0;
+		transform: translateY(-8px);
+		pointer-events: none;
 	}
 }
 

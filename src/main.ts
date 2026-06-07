@@ -4,24 +4,50 @@ import Draggabilly from 'draggabilly'
 
 const rubbleSymbols = ['📞', '📱', '', '', '✉', '🔿', '✎', '✒', '📎', '', '', '', '➦', '👤', '👥', '', '', '', '', '', '', '➢', '🎯', '', '', '♥', '♡', '★', '☆', '👍', '👎', '', '', '❞', '⌂', '', '🔍', '🔦', '', '🔔', '🔗', '⚑', '⚙', '⚒', '🏆', '', '📷', '📣', '☽', '🎨', '🍂', '♪', '♫', '💥', '🎓', '📕', '📰', '👜', '✈', '', '', '🕔', '🎤', '📅', '⚡', '⛈', '💧', '💿', '💼', '💨', '⏳', '🛇', '🎔', '', '🔑', '🔋', '📾', '', '📽', '☕', '🚀', '', '🛆', '🛈', '🌎', '⌨', '', '', '', '', '', '', '🔅', '🔆', '◑', '', '💻', '∞', '💡', '💳', '📸', '✇', '📋', '', '📦', '🎫', '📶', '💦', '◴', '📊', '🔾', '🔒', '🔓', '⊟', '⊞', '❎', '⊖', '⊕', '✖', '⌫', '', '', '⚠', '🔄', '⟳', '⟲', '🔀', '🔙', '↳', '', '🔁', '', '↰', '⇆', '', '', '⚏', '☰', '📄', '', '', '', '', '🌄', '🎬', '🎵', '📁', '', '', '📤', '📥', '💾', '', '☁', '', '📑', '📖', '▶', '‖', '●', '■', '⏩', '⏪', '', '', '🔊', '🔇', '🕨', '🕩', '🕪', '🕬', '', '', '', '', '', '', '', '']
 
+type Face = 'center' | 'up' | 'right' | 'down' | 'left' | 'ahh'
+type Channel = 'static' | 'maybe' | 'eye'
+
+const root = document.documentElement
 const tiltAngle = Math.random() * 40 + 50
 const tiltDirection = Math.random() < 0.5 ? 1 : -1
-document.documentElement.style.setProperty('--head-tilt-angle', `${tiltAngle * tiltDirection}deg`)
+root.style.setProperty('--head-tilt-angle', `${tiltAngle * tiltDirection}deg`)
+
+const requireElement = <ElementType extends Element>(selector: string): ElementType => {
+	const element = document.querySelector<ElementType>(selector)
+
+	if (!element) {
+		throw new Error(`Missing required element: ${selector}`)
+	}
+
+	return element
+}
+
+const setFace = (artHead: HTMLElement, face: Face) => {
+	artHead.dataset.face = face
+}
+
+const setChannel = (tvScreen: HTMLElement, channel: Channel) => {
+	tvScreen.dataset.channel = channel
+}
+
+const markInteractionStarted = () => {
+	root.classList.add('is-playing')
+}
 
 window.addEventListener('load', () => {
-	document.documentElement.classList.add('is-ready')
+	root.classList.add('is-ready')
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-	const artHead = document.querySelector('.art-head')
-	const tv = document.querySelector('.tv')
-	const tvScreen = document.querySelector('.tv__screen')
+	const artHead = requireElement<HTMLElement>('.art-head')
+	const tv = requireElement<HTMLElement>('.tv')
+	const tvScreen = requireElement<HTMLElement>('.tv__screen')
 
-	const headChange = event => {
+	const headChange = (event: MouseEvent) => {
 		const artHeadRect = artHead.getBoundingClientRect()
 
 		if ((event.clientX > artHeadRect.left && event.clientX < artHeadRect.right) && (event.clientY > artHeadRect.top && event.clientY < artHeadRect.bottom)) {
-			artHead.dataset.face = 'center'
+			setFace(artHead, 'center')
 			return
 		}
 
@@ -33,19 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		const angle = Math.atan2(event.clientY - artHeadCenter.top, event.clientX - artHeadCenter.left) * 180 / Math.PI
 
 		if (angle >= -112.5 && angle <= -67.5) {
-			artHead.dataset.face = 'up'
+			setFace(artHead, 'up')
 		}
 		else if (angle >= -22.5 && angle <= 22.5) {
-			artHead.dataset.face = 'right'
+			setFace(artHead, 'right')
 		}
 		else if (angle >= 67.5 && angle <= 112.5) {
-			artHead.dataset.face = 'down'
+			setFace(artHead, 'down')
 		}
 		else if ((angle >= 157.5 && angle <= 180) || (angle >= -180 && angle <= -157.5)) {
-			artHead.dataset.face = 'left'
+			setFace(artHead, 'left')
 		}
 		else {
-			artHead.dataset.face = 'center'
+			setFace(artHead, 'center')
 		}
 	}
 
@@ -56,23 +82,25 @@ document.addEventListener('DOMContentLoaded', () => {
 	})
 
 	draggableHead.on('pointerDown', () => {
-		artHead.dataset.face = 'ahh'
-		tvScreen.dataset.channel = 'maybe'
+		markInteractionStarted()
+		setFace(artHead, 'ahh')
+		setChannel(tvScreen, 'maybe')
 	})
 
 	draggableHead.on('pointerUp', () => {
-		artHead.dataset.face = 'center'
-		tvScreen.dataset.channel = 'static'
+		setFace(artHead, 'center')
+		setChannel(tvScreen, 'static')
 	})
 
 	draggableHead.on('dragStart', () => {
+		markInteractionStarted()
 		document.removeEventListener('mousemove', headChange)
-		artHead.dataset.face = 'ahh'
+		setFace(artHead, 'ahh')
 	})
 
 	draggableHead.on('dragEnd', () => {
-		artHead.dataset.face = 'ahh'
-		tvScreen.dataset.channel = 'eye'
+		setFace(artHead, 'ahh')
+		setChannel(tvScreen, 'eye')
 
 		const tvBottom = parseFloat(window.getComputedStyle(tv).bottom)
 		const dropZone = tvBottom * 0.8
@@ -82,36 +110,35 @@ document.addEventListener('DOMContentLoaded', () => {
 		const headDropFloor = Math.random() * dropZone + dropPadding
 		const headDropFloorTop = window.innerHeight - artHeadHeight - headDropFloor
 
-		document.documentElement.style.setProperty('--head-drop-ceiling', `${draggableHead.position.y}px`)
-		document.documentElement.style.setProperty('--head-drop-floor', `${headDropFloorTop}px`)
+		root.style.setProperty('--head-drop-ceiling', `${draggableHead.position.y}px`)
+		root.style.setProperty('--head-drop-floor', `${headDropFloorTop}px`)
 
 		artHead.classList.add('art-head--dropped')
 
-		const postDrop = event => {
-			event.target.removeEventListener(event.type, postDrop)
+		const postDrop = (event: AnimationEvent) => {
+			event.target?.removeEventListener(event.type, postDrop as EventListener)
 
-			tvScreen.dataset.channel = 'static'
+			setChannel(tvScreen, 'static')
 
-			const rubble = document.querySelector('.rubble')
+			const rubble = requireElement<HTMLElement>('.rubble')
 			rubble.style.bottom = `${headDropFloor}px`
 			rubble.style.left = window.getComputedStyle(artHead).left
 
-			document.querySelectorAll('.rubble__bit').forEach(rubbleBit => {
+			document.querySelectorAll<HTMLElement>('.rubble__bit').forEach(rubbleBit => {
 				rubbleBit.textContent = rubbleSymbols[Math.floor(Math.random() * rubbleSymbols.length)]
 
-				setTimeout(() => {
+				window.setTimeout(() => {
 					rubbleBit.classList.add('rubble__bit--appeared')
 				}, Math.random() * 1000 + 500)
 			})
 
 			artHead.classList.add('art-head--faded')
 
-			setTimeout(() => {
-				document.querySelector('.dog').classList.add('dog--walked')
+			window.setTimeout(() => {
+				requireElement<HTMLElement>('.dog').classList.add('dog--walked')
 			}, 4000)
 		}
 
 		artHead.addEventListener('animationend', postDrop)
 	})
 })
-

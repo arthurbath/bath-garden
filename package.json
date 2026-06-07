@@ -1,25 +1,28 @@
 {
 	"author": "Arthur Bath",
-	"name": "careful-life",
-	"description": "Careful Life",
+	"name": "bath-garden",
+	"description": "Bath Garden",
 	"private": true,
-	"version": "2.0.0",
+	"version": "0.1.0",
 	"license": "ISC",
 	"dependencies": {
-		"draggabilly": "^2.1.1",
+		"draggabilly": "^3.0.0",
 		"reset-css": "^5.0.2"
 	},
 	"devDependencies": {
-		"autoprefixer": "^10.4.20",
-		"postcss": "^8.4.33",
-		"sass": "^1.79.0",
-		"sharp": "^0.33.4",
-		"vite": "^7.2.2",
-		"vite-plugin-image-optimizer": "^1.1.9"
+		"@types/draggabilly": "^3.0.0",
+		"autoprefixer": "^10.5.0",
+		"postcss": "^8.5.15",
+		"sass": "^1.100.0",
+		"sharp": "^0.34.5",
+		"typescript": "^6.0.3",
+		"vite": "^8.0.16",
+		"vite-plugin-image-optimizer": "^2.0.3"
 	},
 	"scripts": {
 		"dev": "vite",
-		"build": "vite build",
+		"dev:local": "vite --host 127.0.0.1",
+		"build": "tsc --noEmit && vite build",
 		"preview": "vite preview"
 	}
 }
